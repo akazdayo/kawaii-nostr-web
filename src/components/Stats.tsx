@@ -38,7 +38,7 @@ const Stats: React.FC<StatsProps> = ({ posts }) => {
 			<div className="flex items-center justify-between mb-4">
 				<h3 className="text-gray-600 font-bold text-lg flex items-center gap-2">
 					<span className="bg-kawaii-yellow p-1 rounded-md">📊</span>
-					Activity Vibe
+					Activity
 				</h3>
 				<span className="text-xs text-gray-400 bg-white px-2 py-1 rounded-full">
 					JST Time
