@@ -1,14 +1,15 @@
 {
-	"name": "akazdayo's-kawaii-portfolio",
+	"name": "akazdayo-kawaii-portfolio",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
 		"dev": "astro dev",
 		"build": "astro build",
-		"preview": "astro preview"
+		"preview": "wrangler dev"
 	},
 	"dependencies": {
+		"@astrojs/cloudflare": "^12.6.11",
 		"@astrojs/react": "^4.4.2",
 		"@google/genai": "^1.30.0",
 		"@tailwindcss/vite": "^4.1.17",

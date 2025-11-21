@@ -2,36 +2,36 @@
 import type { Post } from "../types";
 
 interface Props {
-    post: Post;
+	post: Post;
 }
 
 const { post } = Astro.props;
 
 // Helper to linkify URLs
 const formatContent = (text: string) => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const parts = text.split(urlRegex);
-    return parts.map((part, index) => {
-        if (part.match(urlRegex)) {
-            return {
-                type: "link",
-                href: part,
-                key: `${index}-${part.slice(0, 20)}`,
-            };
-        }
-        return {
-            type: "text",
-            content: part,
-            key: `${index}-${part.slice(0, 20)}`,
-        };
-    });
+	const urlRegex = /(https?:\/\/[^\s]+)/g;
+	const parts = text.split(urlRegex);
+	return parts.map((part, index) => {
+		if (part.match(urlRegex)) {
+			return {
+				type: "link",
+				href: part,
+				key: `${index}-${part.slice(0, 20)}`,
+			};
+		}
+		return {
+			type: "text",
+			content: part,
+			key: `${index}-${part.slice(0, 20)}`,
+		};
+	});
 };
 
 const dateStr = new Intl.DateTimeFormat("ja-JP", {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+	month: "short",
+	day: "numeric",
+	hour: "2-digit",
+	minute: "2-digit",
 }).format(post.date);
 
 const contentParts = formatContent(post.content.replace(/^"|"$/g, ""));
