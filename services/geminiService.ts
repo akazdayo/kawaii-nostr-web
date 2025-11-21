@@ -1,21 +1,26 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { Post, AiSummary } from "../types";
+import type { AiSummary, Post } from "../types";
 
 const apiKey = process.env.API_KEY;
 const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
-export const generateProfileSummary = async (posts: Post[]): Promise<AiSummary | null> => {
-  if (!ai) return null;
+export const generateProfileSummary = async (
+	posts: Post[],
+): Promise<AiSummary | null> => {
+	if (!ai) return null;
 
-  // Use a reasonable sample size to get the vibe without overloading context needlessly, 
-  // though 2.5 Flash handles large context well.
-  // Let's send the last 100 posts for a good "recent" vibe check.
-  const samplePosts = posts.slice(0, 150).map(p => `${p.date.toISOString().split('T')[0]}: ${p.content}`).join("\n");
+	// Use a reasonable sample size to get the vibe without overloading context needlessly,
+	// though 2.5 Flash handles large context well.
+	// Let's send the last 100 posts for a good "recent" vibe check.
+	const samplePosts = posts
+		.slice(0, 150)
+		.map((p) => `${p.date.toISOString().split("T")[0]}: ${p.content}`)
+		.join("\n");
 
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: `You are a creative social media analyst specializing in "Kawaii" (cute) and stylish web aesthetics.
+	try {
+		const response = await ai.models.generateContent({
+			model: "gemini-2.5-flash",
+			contents: `You are a creative social media analyst specializing in "Kawaii" (cute) and stylish web aesthetics.
       
       Analyze the following social media posts from a user named "akazdayo".
       
@@ -27,26 +32,26 @@ export const generateProfileSummary = async (posts: Post[]): Promise<AiSummary |
 
       Posts:
       ${samplePosts}`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            bio: { type: Type.STRING },
-            tags: { type: Type.ARRAY, items: { type: Type.STRING } },
-            vibe: { type: Type.STRING },
-            themeColor: { type: Type.STRING }
-          }
-        }
-      }
-    });
+			config: {
+				responseMimeType: "application/json",
+				responseSchema: {
+					type: Type.OBJECT,
+					properties: {
+						bio: { type: Type.STRING },
+						tags: { type: Type.ARRAY, items: { type: Type.STRING } },
+						vibe: { type: Type.STRING },
+						themeColor: { type: Type.STRING },
+					},
+				},
+			},
+		});
 
-    if (response.text) {
-      return JSON.parse(response.text) as AiSummary;
-    }
-    return null;
-  } catch (error) {
-    console.error("Gemini API Error:", error);
-    return null;
-  }
+		if (response.text) {
+			return JSON.parse(response.text) as AiSummary;
+		}
+		return null;
+	} catch (error) {
+		console.error("Gemini API Error:", error);
+		return null;
+	}
 };
