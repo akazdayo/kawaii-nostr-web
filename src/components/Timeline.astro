@@ -1,0 +1,30 @@
+---
+import type { Post } from "../types";
+import PostCard from "./PostCard.astro";
+
+interface Props {
+    posts: Post[];
+}
+
+const { posts } = Astro.props;
+---
+
+<section>
+    <div class="flex items-center gap-4 mb-8">
+        <h2 class="text-3xl font-bold text-gray-700">Timeline</h2>
+        <div
+            class="h-1 flex-grow bg-gradient-to-r from-kawaii-pink to-transparent rounded-full"
+        >
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {
+            posts.map((post) => (
+                <div>
+                    <PostCard post={post} />
+                </div>
+            ))
+        }
+    </div>
+</section>

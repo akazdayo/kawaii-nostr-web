@@ -1,0 +1,45 @@
+---
+import { generateProfileSummary } from "@/utils/gemini";
+
+const { posts } = Astro.props;
+const aiSummary = await generateProfileSummary(posts);
+---
+
+<div class="glass-panel p-8 rounded-[2rem] relative group">
+    <div
+        class="absolute -top-3 -left-3 bg-gradient-to-r from-kawaii-rose to-kawaii-purple text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg transform -rotate-6"
+    >
+        Gemini Analysis ✨
+    </div>
+
+    <div class="space-y-4">
+        {
+            aiSummary ? (
+                <>
+                    <div class="flex flex-wrap gap-2 justify-center md:justify-start">
+                        {aiSummary.tags.map((tag) => (
+                            <span class="px-4 py-1.5 bg-white/70 rounded-full text-sm font-bold text-gray-600 border border-white shadow-sm hover:bg-white transition-colors cursor-default">
+                                #{tag}
+                            </span>
+                        ))}
+                    </div>
+                    <p class="text-lg md:text-xl leading-relaxed font-medium text-gray-600">
+                        {aiSummary.bio}
+                    </p>
+                    <div class="pt-4 border-t border-white/50 flex items-center justify-between">
+                        <span class="text-sm font-bold text-gray-400">
+                            CURRENT VIBE
+                        </span>
+                        <span class="text-2xl font-black text-kawaii-rose">
+                            {aiSummary.vibe}
+                        </span>
+                    </div>
+                </>
+            ) : (
+                <p class="text-gray-400 text-center">
+                    Analysis unavailable. Check API Key.
+                </p>
+            )
+        }
+    </div>
+</div>

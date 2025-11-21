@@ -1,0 +1,49 @@
+---
+import "../styles/global.css";
+import AiSummaryCard from "@/components/AiSummaryCard.astro";
+import Background from "@/components/Background.astro";
+import DynamicContent from "@/components/DynamicContent";
+import HeroProfile from "@/components/HeroProfile.astro";
+import { fetchKind1Posts } from "@/utils/nostr";
+
+// CSV URL for runtime fetch (replace with your actual CSV URL)
+const posts = await fetchKind1Posts(process.env.PUBLIC_NOSTR_PUBLIC_KEY, [
+    "wss://yabu.me",
+]);
+---
+
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Akazdayo's Kawaii Space</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <div class="min-h-screen w-full relative text-gray-700 overflow-hidden">
+            <!-- Decorative Background Elements -->
+            <Background />
+
+            <div class="container mx-auto px-4 py-8 md:py-16 max-w-6xl">
+                <!-- Hero Profile -->
+                <header
+                    class="mb-16 flex flex-col md:flex-row items-center md:items-start gap-10"
+                >
+                    <HeroProfile>
+                        <!-- Gemini AI Analysis Card -->
+                        <AiSummaryCard posts={posts} />
+                    </HeroProfile>
+                </header>
+
+                <!-- Dynamic Content (Stats & Timeline) - Client-side rendered -->
+                <DynamicContent client:load />
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,87 @@
+---
+import type { Post } from "../types";
+
+interface Props {
+    post: Post;
+}
+
+const { post } = Astro.props;
+
+// Helper to linkify URLs
+const formatContent = (text: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+    return parts.map((part, index) => {
+        if (part.match(urlRegex)) {
+            return {
+                type: "link",
+                href: part,
+                key: `${index}-${part.slice(0, 20)}`,
+            };
+        }
+        return {
+            type: "text",
+            content: part,
+            key: `${index}-${part.slice(0, 20)}`,
+        };
+    });
+};
+
+const dateStr = new Intl.DateTimeFormat("ja-JP", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+}).format(post.date);
+
+const contentParts = formatContent(post.content.replace(/^"|"$/g, ""));
+---
+
+<div
+    class="glass-panel p-5 rounded-3xl hover:scale-[1.02] transition-all duration-300 flex flex-col h-full group relative overflow-hidden"
+>
+    <div
+        class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-kawaii-blue via-kawaii-purple to-kawaii-pink opacity-0 group-hover:opacity-100 transition-opacity"
+    >
+    </div>
+
+    <!-- Content -->
+    <div class="flex-grow mb-3">
+        <p
+            class="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap break-words font-medium"
+        >
+            {
+                contentParts.map((part) =>
+                    part.type === "link" ? (
+                        <a
+                            href={part.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-kawaii-rose hover:text-pink-600 font-bold underline decoration-wavy decoration-1 underline-offset-2 break-all transition-colors"
+                        >
+                            link ↗
+                        </a>
+                    ) : (
+                        <span>{part.content}</span>
+                    ),
+                )
+            }
+        </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex justify-between items-end pt-2 border-t border-white/50">
+        <span
+            class="text-xs text-gray-400 font-bold bg-white/50 px-2 py-1 rounded-full"
+        >
+            {dateStr}
+        </span>
+        <div class="flex space-x-1">
+            <span
+                class="text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
+            >
+                ✨
+            </span>
+        </div>
+    </div>
+</div>
