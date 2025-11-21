@@ -21,6 +21,10 @@ export async function fetchKind1Posts(
 		});
 
 		console.log(`\nFetched ${events.length} posts`);
+		if (events.length === 0) {
+			console.log("No posts found");
+			throw new Error("No posts found");
+		}
 
 		const posts: Post[] = events.map((event) => {
 			const date = new Date(event.created_at * 1000);
