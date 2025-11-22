@@ -1,6 +1,6 @@
-import { createRxNostr, createRxBackwardReq } from "rx-nostr";
-import { verifier } from "rx-nostr-crypto";
 import { nip19 } from "nostr-tools";
+import { createRxBackwardReq, createRxNostr } from "rx-nostr";
+import { verifier } from "rx-nostr-crypto";
 import { firstValueFrom, toArray } from "rxjs";
 import type { Post } from "../types";
 
@@ -33,9 +33,7 @@ export async function fetchKind1Posts(
 	const rxReq = createRxBackwardReq();
 
 	try {
-		const eventsPromise = firstValueFrom(
-			rxNostr.use(rxReq).pipe(toArray()),
-		);
+		const eventsPromise = firstValueFrom(rxNostr.use(rxReq).pipe(toArray()));
 
 		rxReq.emit({
 			kinds: [1],
@@ -91,9 +89,7 @@ export async function fetchProfilePicture(
 	const rxReq = createRxBackwardReq();
 
 	try {
-		const eventsPromise = firstValueFrom(
-			rxNostr.use(rxReq).pipe(toArray()),
-		);
+		const eventsPromise = firstValueFrom(rxNostr.use(rxReq).pipe(toArray()));
 
 		rxReq.emit({
 			kinds: [0],
