@@ -1,34 +1,52 @@
-import { nip19, SimplePool } from "nostr-tools";
-import { useWebSocketImplementation } from "nostr-tools/pool";
-import WebSocket from "ws";
+import { createRxNostr, createRxBackwardReq } from "rx-nostr";
+import { verifier } from "rx-nostr-crypto";
+import { nip19 } from "nostr-tools";
+import { firstValueFrom, toArray } from "rxjs";
 import type { Post } from "../types";
 
-useWebSocketImplementation(WebSocket);
+// Use ws package only in Node.js environment
+const getWebSocketImpl = async () => {
+	if (typeof globalThis.WebSocket !== "undefined") {
+		return globalThis.WebSocket;
+	}
+	const ws = await import("ws");
+	return ws.default;
+};
 
 export async function fetchKind1Posts(
 	npub: string,
 	relays: string[],
 ): Promise<Post[]> {
-	const pool = new SimplePool();
+	const WebSocketImpl = await getWebSocketImpl();
+	const rxNostr = createRxNostr({
+		verifier,
+		websocketCtor: WebSocketImpl as unknown as typeof WebSocket,
+	});
 
 	const { type, data: pubkey } = nip19.decode(npub);
 	if (type !== "npub") {
 		throw new Error("Invalid npub format");
 	}
 
+	rxNostr.setDefaultRelays(relays);
+
+	const rxReq = createRxBackwardReq();
+
 	try {
-		const events = await pool.querySync(
-			relays,
-			{
-				kinds: [1],
-				authors: [pubkey],
-				since: Math.floor(Date.now() / 1000) - 86400 * 7,
-				until: Math.floor(Date.now() / 1000),
-			},
-			{
-				maxWait: 10000,
-			},
+		const eventsPromise = firstValueFrom(
+			rxNostr.use(rxReq).pipe(toArray()),
 		);
+
+		rxReq.emit({
+			kinds: [1],
+			authors: [pubkey],
+			since: Math.floor(Date.now() / 1000) - 86400 * 7,
+			until: Math.floor(Date.now() / 1000),
+		});
+		rxReq.over();
+
+		const packets = await eventsPromise;
+		const events = packets.map((packet) => packet.event);
 
 		console.log(`\nFetched ${events.length} posts`);
 		if (events.length === 0) {
@@ -49,7 +67,7 @@ export async function fetchKind1Posts(
 
 		return posts;
 	} finally {
-		pool.close(relays);
+		rxNostr.dispose();
 	}
 }
 
@@ -57,25 +75,35 @@ export async function fetchProfilePicture(
 	npub: string,
 	relays: string[],
 ): Promise<string | null> {
-	const pool = new SimplePool();
+	const WebSocketImpl = await getWebSocketImpl();
+	const rxNostr = createRxNostr({
+		verifier,
+		websocketCtor: WebSocketImpl as unknown as typeof WebSocket,
+	});
 
 	const { type, data: pubkey } = nip19.decode(npub);
 	if (type !== "npub") {
 		throw new Error("Invalid npub format");
 	}
 
+	rxNostr.setDefaultRelays(relays);
+
+	const rxReq = createRxBackwardReq();
+
 	try {
-		const events = await pool.querySync(
-			relays,
-			{
-				kinds: [0],
-				authors: [pubkey],
-				limit: 1,
-			},
-			{
-				maxWait: 10000,
-			},
+		const eventsPromise = firstValueFrom(
+			rxNostr.use(rxReq).pipe(toArray()),
 		);
+
+		rxReq.emit({
+			kinds: [0],
+			authors: [pubkey],
+			limit: 1,
+		});
+		rxReq.over();
+
+		const packets = await eventsPromise;
+		const events = packets.map((packet) => packet.event);
 
 		console.log(`\nFetched ${events.length} profile pictures`);
 
@@ -86,6 +114,6 @@ export async function fetchProfilePicture(
 
 		return profilePicture;
 	} finally {
-		pool.close(relays);
+		rxNostr.dispose();
 	}
 }
