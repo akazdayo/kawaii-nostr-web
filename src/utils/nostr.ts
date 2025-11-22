@@ -1,5 +1,9 @@
 import { nip19, SimplePool } from "nostr-tools";
+import { useWebSocketImplementation } from "nostr-tools/pool";
+import WebSocket from "ws";
 import type { Post } from "../types";
+
+useWebSocketImplementation(WebSocket);
 
 export async function fetchKind1Posts(
 	npub: string,
