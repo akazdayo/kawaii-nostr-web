@@ -21,9 +21,10 @@ jobs:
 
       - name: Build
         run: nix develop --command bun run build
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - name: Deploy to Cloudflare Workers
         run: nix develop --command bunx wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

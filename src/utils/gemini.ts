@@ -18,6 +18,7 @@ export const generateProfileSummary = async (
 		.join("\n");
 
 	try {
+		console.log("Generating profile summary...");
 		const response = await ai.models.generateContent({
 			model: "gemini-2.5-flash",
 			contents: `You are a creative social media analyst specializing in "Kawaii" (cute) and stylish web aesthetics.
@@ -45,10 +46,13 @@ export const generateProfileSummary = async (
 				},
 			},
 		});
+		console.log("Successfully generated");
 
 		if (response.text) {
+			console.log("Successfully parsed response");
 			return JSON.parse(response.text) as AiSummary;
 		}
+		console.error("Failed to parse response");
 		return null;
 	} catch (error) {
 		console.error("Gemini API Error:", error);
