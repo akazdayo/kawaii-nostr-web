@@ -13,12 +13,18 @@ export async function fetchKind1Posts(
 	}
 
 	try {
-		const events = await pool.querySync(relays, {
-			kinds: [1],
-			authors: [pubkey],
-			since: Math.floor(Date.now() / 1000) - 86400 * 7,
-			until: Math.floor(Date.now() / 1000),
-		});
+		const events = await pool.querySync(
+			relays,
+			{
+				kinds: [1],
+				authors: [pubkey],
+				since: Math.floor(Date.now() / 1000) - 86400 * 7,
+				until: Math.floor(Date.now() / 1000),
+			},
+			{
+				maxWait: 10000,
+			},
+		);
 
 		console.log(`\nFetched ${events.length} posts`);
 		if (events.length === 0) {
@@ -55,11 +61,17 @@ export async function fetchProfilePicture(
 	}
 
 	try {
-		const events = await pool.querySync(relays, {
-			kinds: [0],
-			authors: [pubkey],
-			limit: 1,
-		});
+		const events = await pool.querySync(
+			relays,
+			{
+				kinds: [0],
+				authors: [pubkey],
+				limit: 1,
+			},
+			{
+				maxWait: 10000,
+			},
+		);
 
 		console.log(`\nFetched ${events.length} profile pictures`);
 
