@@ -25,7 +25,7 @@ export const generateProfileSummary = async (
       Generate a profile summary in JSON format with the following fields:
       - bio: A creative, slightly tech-savvy biography (2-3 sentences) in Japanese.
       - tags: A list of 5-7 short hashtags or keywords representing their interests.
-      - vibe: A short, catchy phrase describing their overall "vibe". (2-3 words and emojis)
+      - feel: A short, catchy phrase describing their overall "feel" in japanese.  (2-3 words and emojis)
       - themeColor: A hex color code that matches their vibe (pastel or vibrant).
 
       Posts:
