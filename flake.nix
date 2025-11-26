@@ -15,6 +15,7 @@
           buildInputs = with pkgs; [
             bun
             nodejs_24
+            uv
           ];
         };
       }
