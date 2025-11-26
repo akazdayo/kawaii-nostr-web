@@ -1,6 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { AiSummary, Post } from "../types";
-import { updateVRChatProfile } from "./updateVRChat";
 
 const apiKey = process.env.GEMINI_API_KEY;
 const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
@@ -50,10 +49,6 @@ export const generateProfileSummary = async (
 	if (response.text) {
 		console.log("Successfully parsed response");
 		const result = JSON.parse(response.text) as AiSummary;
-
-		await updateVRChatProfile(
-			`${result.bio}\nCurrent feel: ${result.vibe}\nTags: ${result.tags.map((x) => `#${x}`).join(" ")}`,
-		);
 
 		return result;
 	}
