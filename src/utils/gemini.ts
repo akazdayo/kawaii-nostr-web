@@ -17,7 +17,7 @@ export const generateProfileSummary = async (
 
 	console.log("Generating profile summary...");
 	const response = await ai.models.generateContent({
-		model: "gemini-3-pro-preview",
+		model: "gemini-3-flash-preview",
 		contents: `You are a creative social media analyst specializing in stylish web aesthetics.
 
       Analyze the following social media posts from a user named "akazdayo".
